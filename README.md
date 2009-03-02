@@ -1,7 +1,7 @@
 tsvutils -- utilities for processing tab-separated files
 =====================================================================
 
-*tsvutils* are scripts that can convert and manipulate the TSV file format: tab-separated values, sometimes with a header.  They are intended to allow ad-hoc but reliable processing and summarization of tabular data.
+*tsvutils* are scripts that can convert and manipulate the TSV file format: tab-separated values, sometimes with a header.  They are intended to allow ad-hoc but reliable processing and summarization of tabular data, with interfaces to Excel and MySQL.
 
 github.com/brendano/tsvutils - by Brendan O'Connor - anyall.org
 
