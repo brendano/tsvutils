@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+""" like 'cut' but assumes a header and you specify the columns you want by
+name instead of position"""
+import sys
+
+names = []
+for x in sys.argv:
+  if x.startswith('-f'):
+    name = x[2:]
+    if not name: raise Exception("need column name")
+    names.append(name)
+#print names
+
+input = sys.stdin
+header = input.readline()[:-1].split("\t")
+if any(n not in header for n in names):
+  raise Exception("all specified names must be in the header")
+name_pos = [header.index(n) for n in names]
+
+print "\t".join([header[i] for i in name_pos])
+for line in input:
+  pieces = line[:-1].split("\t")
+  out = [pieces[i] for i in name_pos]
+  print "\t".join(out)

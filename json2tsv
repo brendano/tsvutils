@@ -1,0 +1,22 @@
+#!/usr/bin/env python2.6
+from __future__ import print_function
+import simplejson
+#import json as simplejson   # py 3.0
+import sys,re
+
+json = simplejson.load(sys.stdin)
+
+assert len(json)>0
+item1 = json[0]
+keys = item1.keys()
+keys.sort()
+
+BAD = re.compile("[\r\n\t]")
+
+def clean_cell(x):
+  if x is None: return ""
+  return BAD.sub(" ", unicode(x))
+
+for row in json:
+  print(*[clean_cell(row[k]) for k in keys], sep="\t")
+

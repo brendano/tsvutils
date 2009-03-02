@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+"""
+USAGES
+  tsv2my mydb.temptable < data.tsv
+  xlsx2tsv data.xlsx | python loadtsv.py mydb.temptable
+Loads TSV-with-header data into a new mysql table.
+All columns are varchar's.
+Uses strict TSV - no quoting or comments, and no tabs or newlines in values.
+"""
+import sys,os,re
+from collections import defaultdict
+
+if len(sys.argv) == 1:
+  print "need DBNAME.TABLENAME argument"
+  sys.exit(1)
+db_table_spec = sys.argv[1]
+assert '.' in db_table_spec
+db_name,table_name = db_table_spec.split('.')
+
+def uniq_c(seq):
+  ret = defaultdict(lambda:0)
+  for x in seq:
+    ret[x] += 1
+  return dict(ret)
+
+input = sys.stdin
+header = input.readline()
+columns = [re.sub('[,:; -]','_',h.strip()) for h in header[:-1].split("\t")]
+dups = set(col for col,count in uniq_c(columns).items() if count>1)
+#print dups
+if dups:
+  dup_counts = defaultdict(lambda:0)
+  for i,col in enumerate(columns):
+    if col in dups:
+      dup_counts[col] += 1
+      columns[i] = "%s%d" % (col, dup_counts[col])
+#print columns
+#print len(columns)
+assert len(set(columns)) == len(columns)
+
+import MySQLdb
+conn = MySQLdb.connect(user='root', db=db_name)
+curs = conn.cursor()
+
+curs.execute("drop table if exists  `%s`" % table_name)
+
+max_size = 2000
+sql = "create table `%s` (" % table_name
+# sql += ",".join( "`%s` varchar(%d)" % (c,max_size)  for c in columns )
+sql += ",".join( "`%s` text" % c  for c in columns )
+sql += ")"
+curs.execute(sql)
+
+
+insert_sql = "insert into %s values (%s)" % (table_name, ",".join(["%s"] * len(columns)))
+#print insert_sql
+for line in input:
+  values = line[:-1].split("\t")
+  #print values
+  #print len(values)
+  # if any(len(v)>max_size for v in values):
+  #   print "Warning, value truncated"
+  curs.execute(insert_sql, values)
+

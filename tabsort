@@ -1,0 +1,3 @@
+#!/bin/bash
+export TAB=$(echo -e "\t")
+exec sort "-t$TAB" "$@"

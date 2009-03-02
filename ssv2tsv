@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+""" Space-separated fields => tab separated.  very tolerant of inconsistent numbers of spaces.  Use case: uniq -c | ssv2tsv
+space2tab a better name?  vaguely violates naming convention? """
+import sys
+import tsvutil
+
+for line in sys.stdin:
+  print "\t".join([tsvutil.cell_text_clean(x) for x in line.split()])

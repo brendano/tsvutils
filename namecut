@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+# usage: give list of column names or indexes to extract (like sql select)
+# assumes first line is a header
+
+colnames = $stdin.readline.chomp.split("\t")
+cols = ARGV
+problems = []
+col_inds = cols.map { |c|
+  if c =~ /^\d+$/
+    c.to_i
+  else
+    c = $1 if c =~ /^-f(.*)/
+    raise "don't support cut's full -f syntax yet" if c =~ /,/
+    colnames.index(c) or problems << c
+  end
+}
+if problems.size > 0
+  problems.each{|problem| $stderr.puts "No column with name: #{problem}"}
+  exit -1
+end
+
+$stdin.each do |line|
+  parts = line.chomp.split("\t")
+  puts col_inds.map{|i| parts[i]}.join("\t")
+end

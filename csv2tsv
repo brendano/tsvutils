@@ -1,0 +1,45 @@
+#!/usr/bin/env python2.6
+""" 
+Input is Excel-style CSV.  Either stdin or filename.
+  (We handle Mac Excel's csv which is \\r-delimited)
+Output is honest-to-goodness tsv: no quoting or any \\n\\r\\t.
+"""
+
+from __future__ import print_function
+import csv, sys
+
+
+from tsvutil import cell_text_clean, warning
+
+def clean_row(row):
+  return [cell_text_clean(x) for x in row]
+  #return [x.replace("\n"," ").replace("\t"," ").replace("\r"," ") for x in row]
+  #print row
+  #return [x.encode('utf-8').replace("\n"," ").replace("\t"," ").replace("\r"," ") for x in row]
+  #return [x.replace("\n"," ").replace("\t"," ").replace("\r"," ").encode('utf-8') for x in row]
+
+args = sys.argv[:]
+args.pop(0)
+if len(args)==1:
+  reader = csv.reader(open(args[0],'U'))
+elif len(args) > 1:
+  raise Exception("No support for multiple files yet")
+  # could try to enforce conformity, or meld them together, etc.
+elif not sys.stdin.isatty():
+  reader = csv.reader(sys.stdin)
+else:
+  print(__doc__.strip())
+  sys.exit(1)
+
+header = reader.next()
+print(*clean_row(header), sep="\t")
+
+for row in reader:
+  if len(row) < len(header):
+    # warning("Row with %d values is too short; padding with %d blanks" % (len(row),len(header)-len(row)))
+    row += [''] * (len(header) - len(row))
+  print(*clean_row(row), sep="\t")
+
+
+
+
