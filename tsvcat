@@ -1,0 +1,71 @@
+#!/usr/bin/env python
+""" tsvcat - concatenates TSV-with-header files, aligning columns with same
+name.  can rename columns and match columns across files with different names.
+"""
+
+import sys,itertools
+import codecs; sys.stdout = codecs.open('/dev/stdout','w',encoding='utf8',buffering=0)
+
+def flatten(iter):
+  return list(itertools.chain(*iter))
+def stable_uniq(x):
+  s = set(); y = []
+  for i in x:
+    if i in s: continue
+    s.add(i)
+    y.append(i)
+  return y
+def tsv_reader(f):
+  return csv.DictReader(f, dialect=None,delimiter="\t",quoting=csv.QUOTE_NONE)
+
+items = sys.argv[1:]
+alias_specs = [s for s in items if '=' in s]
+drop_specs = [s for s in items if s.startswith('-')]
+filenames = [s for s in items if s not in alias_specs and s not in drop_specs]
+files = [open(f,'U') for f in filenames]
+file_cols = [f.readline()[:-1].split("\t") for f in files]
+all_cols = stable_uniq(flatten(file_cols))
+
+aliases = {}
+for alias_spec in alias_specs:
+  left,right = alias_spec.split('=')
+  assert left != right
+  assert left and right
+  assert left in all_cols
+  aliases[right] = left
+  if right not in all_cols:
+    all_cols[ all_cols.index(left) ] = right
+  else:
+    all_cols.remove(left)
+
+for drop_spec in drop_specs:
+  col = drop_spec[1:]
+  assert col in all_cols
+  all_cols.remove(col)
+
+print "\t".join(all_cols)
+
+for i,f in enumerate(files):
+  cols = file_cols[i]
+  for line in f:
+    line = unicode(line,'utf8')
+    #print repr(line)
+    parts = line[:-1].split("\t")
+    hash = {}
+    for j in range(len(cols)):
+      hash[cols[j]] = parts[j]
+    out = []
+    for col in all_cols:
+      if col in hash:        
+        out.append(hash[col])
+      elif col in aliases:
+        out.append(hash[aliases[col]])
+      else:
+        out.append('')
+    print u"\t".join(out)
+
+
+
+
+
+
