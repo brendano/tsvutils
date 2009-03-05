@@ -20,6 +20,8 @@ if problems.size > 0
   exit -1
 end
 
+puts col_inds.map{|i| colnames[i]}.join("\t")
+
 $stdin.each do |line|
   parts = line.chomp.split("\t")
   puts col_inds.map{|i| parts[i]}.join("\t")

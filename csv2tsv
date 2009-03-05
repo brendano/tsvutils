@@ -8,8 +8,13 @@ Output is honest-to-goodness tsv: no quoting or any \\n\\r\\t.
 from __future__ import print_function
 import csv, sys
 
+# sys.stdout.encoding is None.  argh!!!
+import codecs; sys.stdout = codecs.open('/dev/stdout','w',encoding='utf8',buffering=0)
 
-from tsvutil import cell_text_clean, warning
+#print(sys.stdout.encoding)
+#print("---------------------")
+
+from tsvutil import cell_text_clean, warning, UnicodeReader
 
 def clean_row(row):
   return [cell_text_clean(x) for x in row]
@@ -21,7 +26,9 @@ def clean_row(row):
 args = sys.argv[:]
 args.pop(0)
 if len(args)==1:
-  reader = csv.reader(open(args[0],'U'))
+  #reader = csv.reader(open(args[0],'U'))
+  reader = UnicodeReader(open(args[0],'U'))
+  #reader = csv.reader(codecs.open(args[0],'U','utf-8'))
 elif len(args) > 1:
   raise Exception("No support for multiple files yet")
   # could try to enforce conformity, or meld them together, etc.
