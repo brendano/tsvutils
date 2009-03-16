@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'pp'
+
+all = []
+YAML.load_documents(STDIN) do |ydoc|
+  all << ydoc
+end
+
+cols = all.map{|x| x.keys}.flatten.uniq.sort
+puts cols.map{|c| c.gsub(/\s/," ")}.join("\t")
+all.each do |ydoc|
+  puts cols.map{|c| (ydoc[c] || "").to_s.gsub(/\s/," ")}.join("\t")
+end
+
+
+# cols = nil
+# YAML.load_documents(STDIN) do |ydoc|
+#   if cols.nil?
+#     cols = ydoc.keys.sort
+#     puts cols.map{|c| c.gsub(/\s/," ")}.join("\t")
+#   end
+#   puts cols.map{|c| ydoc[c].gsub(/\s/," ")}.join("\t")
+# end
