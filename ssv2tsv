@@ -3,6 +3,7 @@
 space2tab a better name?  vaguely violates naming convention? """
 import sys
 import tsvutil
+tsvutil.fix_stdio()
 
 for line in sys.stdin:
   print "\t".join([tsvutil.cell_text_clean(x) for x in line.split()])

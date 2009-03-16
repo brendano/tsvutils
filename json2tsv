@@ -3,6 +3,8 @@ from __future__ import print_function
 import simplejson
 #import json as simplejson   # py 3.0
 import sys,re
+import tsvutil
+tsvutil.fix_stdio()
 
 json = simplejson.load(sys.stdin)
 

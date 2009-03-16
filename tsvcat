@@ -4,7 +4,9 @@ name.  can rename columns and match columns across files with different names.
 """
 
 import sys,itertools
-import codecs; sys.stdout = codecs.open('/dev/stdout','w',encoding='utf8',buffering=0)
+import tsvutil
+tsvutil.fix_stdio()
+#import codecs; sys.stdout = codecs.open('/dev/stdout','w',encoding='utf8',buffering=0)
 
 def flatten(iter):
   return list(itertools.chain(*iter))
@@ -23,6 +25,8 @@ alias_specs = [s for s in items if '=' in s]
 drop_specs = [s for s in items if s.startswith('-')]
 filenames = [s for s in items if s not in alias_specs and s not in drop_specs]
 files = [open(f,'U') for f in filenames]
+if not filenames:
+  files = [sys.stdin]
 file_cols = [f.readline()[:-1].split("\t") for f in files]
 all_cols = stable_uniq(flatten(file_cols))
 
@@ -40,6 +44,8 @@ for alias_spec in alias_specs:
 
 for drop_spec in drop_specs:
   col = drop_spec[1:]
+  #print col
+  #print all_cols
   assert col in all_cols
   all_cols.remove(col)
 

@@ -1,4 +1,4 @@
-import sys,csv
+import sys,csv,codecs
 
 warning_count = 0
 warning_max = 20
@@ -21,6 +21,21 @@ def cell_text_clean(text):
   s = s.replace("\t"," ").replace("\n"," ").replace("\r"," ")
   return s
 
+def fix_stdio():
+  sys.stdout = codecs.open('/dev/stdout','w',encoding='utf8',buffering=0)
+  sys.stdout = IOWrapper(sys.stdout)
+
+class IOWrapper:
+  def __init__(self, fp):
+    self.fp = fp
+  def write(self,*a,**k):
+    try:
+      self.fp.write(*a,**k)
+    except IOError as e:
+      if e.errno == 32:  # broken pipe
+        sys.exit(0)
+      raise e
+
 ################### 
 # http://docs.python.org/library/csv.html
 
@@ -38,7 +53,9 @@ class UTF8Recoder:
         return self
 
     def next(self):
-        return self.reader.next().encode("utf-8")
+      #s = self.reader.next()
+      #return s.encode('utf-8','replace')
+      return self.reader.next().encode("utf-8")
 
 class UnicodeReader:
     """

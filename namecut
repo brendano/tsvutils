@@ -8,7 +8,9 @@ cols = ARGV
 problems = []
 col_inds = cols.map { |c|
   if c =~ /^\d+$/
-    c.to_i
+    c = c.to_i
+    raise "bad column number (1-indexed): #{c}" if c<=0 || c > cols.size+1
+    c -= 1
   else
     c = $1 if c =~ /^-f(.*)/
     raise "don't support cut's full -f syntax yet" if c =~ /,/
