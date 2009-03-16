@@ -18,7 +18,9 @@ To read from a pipe in python, ironically it takes a few tricks to disable the
 csv module's complicated excel-compatible default rules:
 csv.DictReader(os.popen("xlsx2tsv filename.xlsx"), dialect=None, delimiter='\\t', quoting=csv.QUOTE_NONE)
 
-brendan o'connor - anyall.org - gist.github.com/22764
+brendan o'connor - anyall.org 
+originally at gist.github.com/22764
+but new home is github.com/brendano/tsvutils
 """
 
 #from __future__ import print_function
@@ -36,7 +38,7 @@ if args:
 elif not sys.stdin.isatty():
   z = zipfile.ZipFile(sys.stdin)
 else:
-  print __doc__.strip()
+  print>>sys.stderr, __doc__.strip()
   sys.exit(1)
 
 n=lambda x: "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}%s" % x

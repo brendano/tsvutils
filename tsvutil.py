@@ -1,3 +1,5 @@
+"""Miscellaneous utilities to support some of the tsvutils scripts"""
+
 import sys,csv,codecs
 
 warning_count = 0

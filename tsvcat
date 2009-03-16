@@ -1,6 +1,9 @@
-#!/usr/bin/env python
-""" tsvcat - concatenates TSV-with-header files, aligning columns with same
-name.  can rename columns and match columns across files with different names.
+#!/usr/bin/env python2.6
+"""
+tsvcat [files]
+
+Concatenates TSV-with-header files, aligning columns with same name.  
+Can rename columns and match columns across files with different names.
 """
 
 import sys,itertools

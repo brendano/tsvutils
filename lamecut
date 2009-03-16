@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 """ like 'cut' but assumes a header and you specify the columns you want by
-name instead of position"""
+name instead of position
+
+not as good as 'namecut', use that instead
+"""
 import sys
 
 names = []

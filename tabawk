@@ -1,4 +1,13 @@
 #!/usr/bin/env ruby
+$doc = %{
+tabawk [same args as awk]
+
+Wrapper around 'awk' for tab-separation for both input and output records
+}
+if ARGV.size==0 #and STDIN.tty?
+  STDERR.puts $doc.strip
+  exit 1
+end
 
 awk_args = ARGV.clone
 

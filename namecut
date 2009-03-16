@@ -1,7 +1,17 @@
 #!/usr/bin/env ruby
 
-# usage: give list of column names or indexes to extract (like sql select)
-# assumes first line is a header
+$doc = %{
+namecut [column names and/or 1-based indexes]
+
+Assume first line is a header.
+Those columns are extracted (like sql select).
+Like 'cut' but with names; and jankier.
+}
+
+if STDIN.tty?
+  STDERR.puts $doc.strip
+  exit 1
+end
 
 colnames = $stdin.readline.chomp.split("\t")
 cols = ARGV

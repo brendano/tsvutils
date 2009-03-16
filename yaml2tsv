@@ -1,7 +1,19 @@
 #!/usr/bin/env ruby
+$doc = %{
+yaml2tsv
+
+Takes a YAML document stream -- that is, a concatenation of YAML top-level
+objects -- and treats them as key/value records to be turned into
+tsv-with-header.
+}
 
 require 'yaml'
 require 'pp'
+
+if STDIN.tty?
+  STDERR.puts $doc.strip
+  exit 1
+end
 
 all = []
 YAML.load_documents(STDIN) do |ydoc|
