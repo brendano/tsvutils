@@ -18,6 +18,7 @@ Manipulate tsv:
 * namecut - like 'cut' but with header names.
 * tabsort - 'sort' wrapper with tab delimiter
 * tabawk  - 'awk' wrapper with tab delimiter
+* hwrap   - wraps anything but passes through header line
 
 Convert out of tsv:
 
@@ -30,7 +31,7 @@ These conditions are all enforced in scripts that convert to tsv.  For a program
 
 TSV is an easy format for other programs to handle: after removing the newline, split("\t") correctly parses a row.
 
-Note that "tail +2" or "tail -n+2" strips out a tsv file's header.  A common pattern is to preserve preserve the header while manipulating the rows.  For example, to sort a file:
+Note that "tail +2" or "tail -n+2" strips out a tsv file's header.  A common pattern is to preserve preserve the header while manipulating the rows.  For example, the following sorts a file.  ("hwrap" does this too.)
 
     $ (head -1 file; tail +2 file | tabsort -k2) > outfile
 

@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+# assume stdin has a header and the rest are rows.
+# pass-through the header, then execute command only on the rows.
+import sys,os
+sys.stdin = open('/dev/stdin','U',buffering=0)
+sys.stdout = open('/dev/stdout','w',buffering=0)
+header = sys.stdin.readline()
+print header[:-1]
+args = sys.argv[1:]
+os.execvp( args[0], args )
+#os.execvp("ls", ["--color","/"])
