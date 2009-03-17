@@ -24,6 +24,7 @@ Convert out of tsv:
 
 * tsv2csv - convert tsv to Excel-compatible csv.
 * tsv2my  - load tsv into a new MySQL table.
+* tsv2fmt - format as ASCII-art table.
 
 Here, the "tsv" file format is honest-to-goodness tab-separated values, usually with a header.  No quoting, escaping, or comments.  All rows should have the same number of fields.  Rows end with a unix \n newline.  Cell values cannot have tabs or newlines.
 

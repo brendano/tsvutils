@@ -1,0 +1,45 @@
+#!/usr/bin/env python2.6
+from __future__ import print_function
+import sys
+from collections import defaultdict
+import tsvutil
+tsvutil.fix_stdio()
+
+cols = sys.stdin.readline()[:-1].split("\t")
+J = len(cols)
+width_hists = [defaultdict(lambda:0) for j in range(J)]
+
+rows = []
+for line in sys.stdin:
+  vals = line[:-1].split("\t")
+  for j in range(J):
+    width_hists[j][len(vals[j])] += 1
+  rows.append(vals)
+
+widths = [max(len(cols[j]), max(width_hists[j].keys())) for j in range(J)]
+
+# todo, if >5ish rows, drop high-width outliers  in a column when computing the
+# global width to use.  so rows with outliers look bad but rest are good.
+# outlier rule something like, e.g. .. >=95percentile if min outlier > 20char bigger than 94th percentile 
+
+def print_row(row):
+  global widths
+  print("| ", end='')
+  print(*[ ("%-" +str(widths[j])+ "s") % row[j]  for j in range(J)], sep=" | ", end='')
+  print(" |")
+#print(" ", "-"* (sum([w+3 for w in widths])-1), " ",  sep='' )
+def print_sep():
+  global widths
+  for j in range(J):
+    print("+"+("-"*(2+widths[j])), end='')
+  print("+")
+
+print_sep()
+print_row(cols)
+print_sep()
+
+#print("-"* (1+sum([w+3 for w in widths])))
+for row in rows:
+  print_row(row)
+
+print_sep()

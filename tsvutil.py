@@ -33,7 +33,7 @@ class IOWrapper:
   def write(self,*a,**k):
     try:
       self.fp.write(*a,**k)
-    except IOError as e:
+    except IOError, e:
       if e.errno == 32:  # broken pipe
         sys.exit(0)
       raise e
