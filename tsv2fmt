@@ -34,12 +34,12 @@ def print_sep():
     print("+"+("-"*(2+widths[j])), end='')
   print("+")
 
-print_sep()
+#print_sep()
 print_row(cols)
-print_sep()
+#print_sep()
 
 #print("-"* (1+sum([w+3 for w in widths])))
 for row in rows:
   print_row(row)
 
-print_sep()
+#print_sep()

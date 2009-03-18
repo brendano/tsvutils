@@ -24,8 +24,12 @@ def cell_text_clean(text):
   return s
 
 def fix_stdio():
+  # ideally, would be nice to make python shut up and pretend encodings dont exist, like ruby
+  # by default coerces to ascii -- very bad
+  # solution seems to be to coerce to utf8 -- but not necessarily ideal either
   sys.stdout = codecs.open('/dev/stdout','w',encoding='utf8',buffering=0)
   sys.stdout = IOWrapper(sys.stdout)
+  sys.stdin = codecs.open('/dev/stdin','U',encoding='utf8',buffering=0)
 
 class IOWrapper:
   def __init__(self, fp):
