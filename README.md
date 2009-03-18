@@ -16,9 +16,10 @@ Convert to tsv:
 Manipulate tsv:
 
 * namecut - like 'cut' but with header names.
+* tsvcat  - concatenate tsv's, aligning common columns.
+* hwrap   - wraps pipeline process but preserves stdin's header.
 * tabsort - 'sort' wrapper with tab delimiter.
 * tabawk  - 'awk' wrapper with tab delimiter.
-* hwrap   - wraps anything, preserving header.
 
 Convert out of tsv:
 
@@ -47,18 +48,18 @@ The TSV format is intended to work with many other pipeline-friendly programs.  
 * echo 'select a,b from bla' | mysql
 * echo -e "a\tb"; echo "select a,b from bla" | sqlite3 -separator $(echo -e '\t')
 * echo -e "a\tb"; echo "select a,b from bla" | psql -tqAF $(echo -e '\t')
-* [shuffle][sh]
-* [md5sort][md]   
-* [setdiff][sd]
-* [mapagg][ma]
-* [pv][pv]
+* [shuffle][]
+* [md5sort][]   
+* [setdiff][]
+* [mapagg][]
+* [pv][]
 * (GUI) Excel: copy-and-paste cells <-> text as tsv (though kills double quotes)
 * (GUI) Web browsers: copy rendered HTML table -> text as tsv
 
-[sh]: http://www.w3.org/People/Bos/Shuffle
-[md]: http://gist.github.com/22959
-[sd]: http://gist.github.com/22958
-[ma]: http://gist.github.com/67656
+[shuffle]: http://www.w3.org/People/Bos/Shuffle
+[md5sort]: http://gist.github.com/22959
+[setdiff]: http://gist.github.com/22958
+[mapagg]: http://gist.github.com/67656
 [pv]: http://www.ivarch.com/programs/pv.shtml
 
 
