@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+# input lines are name=value pairs, with other crap strewn about, e.g.
+#
+# t=0 i=0 label=1 pred=1
+# blabla t=2 i=0 label=1 pred=0.999988  OMG!!!
+# t=1 i=1993 label=0 pred=0
+# t=1 i=1996 label=0 pred=9.16984e-06
+#
+# this is an easy debug format to output from a C program.
+# combined with grep, use this to get tables of useful event-like data
+
+class String
+  def matches(regex)
+    ret = []
+    scan(regex) do |match_groups|
+      ret << $~
+    end
+    ret
+  end
+end
+
+class Regexp
+  def matches(str)
+    str.matches(self)
+  end
+end
+
+def parse_line(line)
+  # >> (/(\S+)=(\S+)/.matches("t=1 i=1996 label=0 pred=9.16984e-06"))[0][1..2]
+
+  matches = /(\S*[a-zA-Z0-9])=(\S+)/.matches(line)
+  ret = {}
+  for m in matches
+    k,v = m[1..2]
+    ret[k] = v
+  end
+  ret
+
+end
+
+names = nil
+
+for line in STDIN
+  next if line !~ /[a-zA-Z0-9]=\S/
+
+  record = parse_line(line.chomp)
+  if names.nil?
+    names = record.keys.sort
+    puts names.join("\t")
+  end
+  puts names.map{|k| record[k]}.join("\t")
+end
+
