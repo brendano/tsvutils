@@ -94,6 +94,10 @@ Or equivalently,
     for record in tsv_reader(sys.stdin):
       print record  # => hash of key/values
 
+Loading in R:
+
+    data = read.delim("data.tsv", sep="\t")
+
 
 Installation
 ------------
