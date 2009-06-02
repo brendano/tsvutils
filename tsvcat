@@ -57,8 +57,7 @@ print "\t".join(all_cols)
 for i,f in enumerate(files):
   cols = file_cols[i]
   for line in f:
-    line = unicode(line,'utf8')
-    #print repr(line)
+    #line = unicode(line,'utf8')
     parts = line[:-1].split("\t")
     hash = {}
     for j in range(len(cols)):
