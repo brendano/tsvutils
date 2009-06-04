@@ -8,10 +8,10 @@ github.com/brendano/tsvutils - by Brendan O'Connor - anyall.org
 
 Convert to tsv:
 
-* csv2tsv  - convert Excel-compatible csv to tsv.
-* json2tsv - convert JSON array of records to tsv.
-* ssv2tsv  - convert space-separated values to tsv.
-* xlsx2tsv - convert Excel's .xlsx format to tsv.
+* csv2tsv  - convert from Excel-compatible csv.
+* json2tsv - convert from concatenated JSON records.
+* xlsx2tsv - convert from Excel's .xlsx format.
+* others: eq2tsv ssv2tsv uniq2tsv yaml2tsv
 
 Manipulate tsv:
 
@@ -102,7 +102,7 @@ Loading in R:
 Installation
 ------------
 
-Lots of these scripts aren't very polished -- needing fixes for python utf-8 stdin/stdout and the like -- so you're best off just putting the entire directory on your PATH in case you need to hack up the scripts.
+Some of these scripts aren't very polished -- might need utf-8 fixes or something -- so you're best off just putting the entire directory on your PATH in case you need to hack up the scripts.
 
 
 The philosophy of tsvutil
