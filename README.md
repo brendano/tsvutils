@@ -118,6 +118,6 @@ There are many data processing and analysis situations where data consists of ta
 
 But SQL databases and Excel spreadsheets are often inconvenient data management environments compared to the filesystem on the unix commandline.  Unfortunately, the most common file format for tables is CSV, which is complex and has several incompatible versions.  It plays only moderately nicely with the unix commandline, which is the best ad-hoc processing tool for filesystem data.  Often the only correct way to handle CSV is to use a parsing library, but it's inconvenient to fire up a python/perl/ruby session just to do simple sanity checks and casually inspect data.
 
-To balance these needs, so far I've found that TSV-with-headers is the most convenient canonical format for table data in the filesystem/commandline environment. It's also good as a lingua franca intermediate format in shell pipelines.  These utilities are just a little bit of glue to make TSV play nicely with Excel, MySQL, and Unix tools.  Interfaces in and out of other table-centric environments could easily be added.
+To balance these needs, so far I've found that TSV-with-headers is the most convenient canonical format for table data in the filesystem/commandline environment, or at least the lingua franca in shell pipelines.  These utilities are just a little bit of glue to make TSV play nicely with CSV, Excel, MySQL, and Unix tools.  Interfaces in and out of other table-centric environments could easily be added.
 
 
