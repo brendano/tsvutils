@@ -90,7 +90,7 @@ Parsing TSV-with-headers in Python:
 
 Or equivalently,
 
-    tsv_reader = lambda f: csv.DictReader(f, dialect=None, delimiter='\\t', quoting=csv.QUOTE_NONE)
+    tsv_reader = lambda f: csv.DictReader(f, dialect=None, delimiter='\t', quoting=csv.QUOTE_NONE)
     for record in tsv_reader(sys.stdin):
       print record  # => hash of key/values
 
