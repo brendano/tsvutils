@@ -1,5 +1,5 @@
-#!/usr/bin/env python2.6
-from __future__ import print_function
+#!/usr/bin/env python
+#from __future__ import print_function
 import sys
 from collections import defaultdict
 import tsvutil
@@ -24,15 +24,15 @@ widths = [max(len(cols[j]), max(width_hists[j].keys())) for j in range(J)]
 
 def print_row(row):
   global widths
-  print("| ", end='')
-  print(*[ ("%-" +str(widths[j])+ "s") % row[j]  for j in range(J)], sep=" | ", end='')
-  print(" |")
-#print(" ", "-"* (sum([w+3 for w in widths])-1), " ",  sep='' )
+  sys.stdout.write("| ")
+  sys.stdout.write(" | ".join([("%-"+str(widths[j])+"s") % row[j] for j in range(J)]))
+  print>>sys.stdout, " |"
+
 def print_sep():
   global widths
   for j in range(J):
-    print("+"+("-"*(2+widths[j])), end='')
-  print("+")
+    sys.stdout.write("+"+("-"*(2+widths[j])))
+  print "+"
 
 #print_sep()
 print_row(cols)
