@@ -12,7 +12,9 @@ width_hists = [defaultdict(lambda:0) for j in range(J)]
 rows = []
 for line in sys.stdin:
   vals = line[:-1].split("\t")
-  for j in range(J):
+
+  #for j in range(J):
+  for j in xrange(len(vals)):
     width_hists[j][len(vals[j])] += 1
   rows.append(vals)
 

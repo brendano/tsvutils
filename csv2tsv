@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/env python
 """ 
 Input is Excel-style CSV.  Either stdin or filename.
   (We can handle Mac Excel's \\r-delimited csv)
@@ -34,13 +34,15 @@ else:
   sys.exit(1)
 
 header = reader.next()
-print(*clean_row(header), sep="\t")
+print "\t".join(clean_row(header))
+#print(*clean_row(header), sep="\t")
 
 for row in reader:
   if len(row) < len(header):
     # warning("Row with %d values is too short; padding with %d blanks" % (len(row),len(header)-len(row)))
     row += [''] * (len(header) - len(row))
-  print(*clean_row(row), sep="\t")
+  print "\t".join(clean_row(row))
+  #print(*clean_row(row), sep="\t")
 
 
 

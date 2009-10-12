@@ -17,6 +17,11 @@ db_table_spec = sys.argv[1]
 assert '.' in db_table_spec
 db_name,table_name = db_table_spec.split('.')
 
+if len(sys.argv)>2:
+  colspec = sys.argv[2]
+else:
+  colspec = None
+
 def uniq_c(seq):
   ret = defaultdict(lambda:0)
   for x in seq:
@@ -44,10 +49,15 @@ curs = conn.cursor()
 
 curs.execute("drop table if exists  `%s`" % table_name)
 
+if colspec:
+  col_types = colspec.split(",")
+else:
+  col_types = ['text'] * len(columns)
+
 max_size = 2000
 sql = "create table `%s` (" % table_name
 # sql += ",".join( "`%s` varchar(%d)" % (c,max_size)  for c in columns )
-sql += ",".join( "`%s` text" % c  for c in columns )
+sql += ",".join( "`%s` %s" % (columns[j], col_types[j]) for j in range(len(columns)))
 sql += ")"
 curs.execute(sql)
 
