@@ -16,6 +16,7 @@ for line in sys.stdin:
     width_hists[j][len(vals[j])] += 1
   rows.append(vals)
 
+if not rows: sys.exit()
 widths = [max(len(cols[j]), max(width_hists[j].keys())) for j in range(J)]
 
 # todo, if >5ish rows, drop high-width outliers  in a column when computing the
