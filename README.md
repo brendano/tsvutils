@@ -46,8 +46,8 @@ The TSV format is intended to work with many other pipeline-friendly programs.  
 * cat, head, tail, tail -n+X, cut, merge, diff, comm, sort, uniq, uniq -c, wc -l
 * perl -pe, ruby -ne, awk, sed, tr
 * echo 'select a,b from bla' | mysql
-* echo -e "a\tb"; echo "select a,b from bla" | sqlite3 -separator $(echo -e '\t')
-* echo -e "a\tb"; echo "select a,b from bla" | psql -tqAF $(echo -e '\t')
+* (echo -e "a\tb"; echo "select a,b from bla") | sqlite3 -separator $(echo -e '\t')
+* (echo -e "a\tb"; echo "select a,b from bla") | psql -tqAF $(echo -e '\t')
 * [shuffle][]
 * [md5sort][]   
 * [setdiff][]
