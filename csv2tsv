@@ -5,7 +5,7 @@ Input is Excel-style CSV.  Either stdin or filename.
 Output is honest-to-goodness tsv: no quoting or any \\n\\r\\t.
 """
 
-from __future__ import print_function
+#from __future__ import print_function
 import csv, sys
 
 from tsvutil import cell_text_clean, warning, UnicodeReader
