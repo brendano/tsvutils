@@ -39,15 +39,29 @@ def parse_line(line)
 
 end
 
+def puts_nas(n)
+  puts( (["NA"]*n).join("\t") )
+end
+
 names = nil
+buildup = 0
 
 for line in STDIN
-  next if line !~ /[a-zA-Z0-9]=\S/
+  if line !~ /[a-zA-Z0-9]=\S/
+    next unless ARGV.member?('-a')
+    if names.nil?
+      buildup += 1
+    else
+      puts_nas(names.size)
+    end
+    next
+  end
 
   record = parse_line(line.chomp)
   if names.nil?
     names = record.keys.sort
     puts names.join("\t")
+    buildup.times { puts_nas(names.size) }
   end
   puts names.map{|k| record[k]}.join("\t")
 end
