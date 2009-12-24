@@ -20,14 +20,18 @@ def safe_json_iter(raw_json_iter):
     except Exception, e:
       print>>sys.stderr, type(e), e
     yield json
+def take(n, iterable):
+  "Return first n items of the iterable as a list"
+  return list(itertools.islice(iterable, n))
 
 json_iter = safe_json_iter(sys.stdin)
 keys = sys.argv[1:]
 if not keys:
-  item1 = json_iter.next()
-  keys = item1.keys()
-  keys.sort()
-  json_iter = itertools.chain([item1], json_iter)
+  top = take(1000, json_iter)
+  keys = set()
+  for item in top:  keys |= set(item.keys())
+  keys = list(keys); keys.sort()
+  json_iter = itertools.chain(top, json_iter)
 
 BAD = re.compile("[\r\n\t]")
 
@@ -43,7 +47,7 @@ def lookup(json, k):
     v = json
     for k in ks: v = v[k]
     return v
-  return json[k]
+  return json.get(k,"")
 
 print "\t".join(keys)
 for json in json_iter:
