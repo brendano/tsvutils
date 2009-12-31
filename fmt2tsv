@@ -1,0 +1,3 @@
+#!/bin/bash
+# kinda silly but sometimes useful
+perl -pe 's/^\| *//g; s/ *\|$//;  s/ *\| */\t/g'
