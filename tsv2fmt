@@ -5,9 +5,8 @@ from collections import defaultdict
 import tsvutil
 tsvutil.fix_stdio()
 
-cols = sys.stdin.readline()[:-1].split("\t")
-J = len(cols)
-width_hists = [defaultdict(lambda:0) for j in range(J)]
+#width_hists = [defaultdict(lambda:0) for j in range(J)]
+width_hists = defaultdict(lambda: defaultdict(lambda:0))
 
 rows = []
 for line in sys.stdin:
@@ -18,8 +17,11 @@ for line in sys.stdin:
     width_hists[j][len(vals[j])] += 1
   rows.append(vals)
 
+J = max(width_hists.keys()) + 1
+assert range(J) == sorted(list(width_hists.keys()))
+
 if not rows: sys.exit()
-widths = [max(len(cols[j]), max(width_hists[j].keys())) for j in range(J)]
+widths = [max(width_hists[j].keys()) for j in range(J)]
 
 # todo, if >5ish rows, drop high-width outliers  in a column when computing the
 # global width to use.  so rows with outliers look bad but rest are good.
@@ -28,7 +30,7 @@ widths = [max(len(cols[j]), max(width_hists[j].keys())) for j in range(J)]
 def print_row(row):
   global widths
   sys.stdout.write("| ")
-  sys.stdout.write(" | ".join([("%-"+str(widths[j])+"s") % row[j] for j in range(J)]))
+  sys.stdout.write(" | ".join([("%-"+str(widths[j])+"s") % row[j] for j in range(len(row))]))
   print>>sys.stdout, " |"
 
 def print_sep():
@@ -38,7 +40,7 @@ def print_sep():
   print "+"
 
 #print_sep()
-print_row(cols)
+#print_row(rows[0])
 #print_sep()
 
 #print("-"* (1+sum([w+3 for w in widths])))
