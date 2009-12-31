@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+puts "\\hline"
+for line in STDIN
+  puts line.chomp.gsub("_","\\_").gsub("\t"," & ") + " \\\\"
+end
+puts "\\hline"

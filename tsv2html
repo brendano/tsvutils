@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+"""make an html table useful for ad-hoc reporting, e.g. in a wiki or webpage"""
+
+import sys
+print "<table cellpadding=3 border=1 cellspacing=0>"
+for line in sys.stdin:
+  parts = line[:-1].split("\t")
+  sys.stdout.write("<tr>")
+  for part in parts: sys.stdout.write("<td>%s" % part)
+  print
+print "</table>"
