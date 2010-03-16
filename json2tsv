@@ -45,8 +45,8 @@ def lookup(json, k):
     # jpath path
     ks = k.split('.')
     v = json
-    for k in ks: v = v[k]
-    return v
+    for k in ks: v = v.get(k,{})
+    return v or ""
   return json.get(k,"")
 
 print "\t".join(keys)
