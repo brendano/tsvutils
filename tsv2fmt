@@ -28,6 +28,7 @@ widths = [max(len(cols[j]), max(width_hists[j].keys())) for j in range(J)]
 def print_row(row):
   global widths
   sys.stdout.write("| ")
+  if len(row) < J:  row += [""] * (J - len(row))
   sys.stdout.write(" | ".join([("%-"+str(widths[j])+"s") % row[j] for j in range(J)]))
   print>>sys.stdout, " |"
 
