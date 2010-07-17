@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+"""
+Convert a stream of JSON objects to TSV, extracting the keys 
+you specify into columns.
+
+If you don't specify any keys, it tries to figure out the set of all keys.
+"""
 #from __future__ import print_function
 import simplejson
 #import json as simplejson   # py 3.0

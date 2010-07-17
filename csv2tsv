@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-""" 
+r""" 
 Input is Excel-style CSV.  Either stdin or filename.
-  (We can handle Mac Excel's \\r-delimited csv)
-Output is honest-to-goodness tsv: no quoting or any \\n\\r\\t.
+  (We can handle Mac Excel's \r-delimited csv)
+Output is honest-to-goodness tsv: no quoting or any \n\r\t.
 """
 
 #from __future__ import print_function

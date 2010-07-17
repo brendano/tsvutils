@@ -1,7 +1,7 @@
 tsvutils -- utilities for processing tab-separated files
 =====================================================================
 
-*tsvutils* are scripts that can convert and manipulate the TSV file format: tab-separated values, sometimes with a header.  They are intended to allow ad-hoc but reliable processing and summarization of tabular data, with interfaces to Excel and MySQL.
+*tsvutils* are scripts that can convert and manipulate the TSV file format: tab-separated values, sometimes with a header.  They build on top of standard Unix utilities to allow ad-hoc, efficient, and reliable processing and summarization of tabular data.
 
 github.com/brendano/tsvutils - by Brendan O'Connor - anyall.org
 
@@ -13,11 +13,15 @@ Convert to tsv:
 * xlsx2tsv - convert from Excel's .xlsx format.
 * others: eq2tsv ssv2tsv uniq2tsv yaml2tsv
 
-Manipulate tsv:
+Manipulate tsv; header smartness:
 
-* namecut - like 'cut' but with header names.
-* tsvcat  - concatenate tsv's, aligning common columns.
+* tsvawk  - gives you column names in your awk.
 * hwrap   - wraps pipeline process but preserves stdin's header.
+* tsvcat  - concatenate tsv's, aligning common columns.
+* namecut - like 'cut' but with header names.
+
+Manipulate tsv; wrappers for Unix utilities:
+
 * tabsort - 'sort' wrapper with tab delimiter.
 * tabawk  - 'awk' wrapper with tab delimiter.
 
@@ -26,12 +30,14 @@ Convert out of tsv:
 * tsv2csv - convert tsv to Excel-compatible csv.
 * tsv2my  - load tsv into a new MySQL table.
 * tsv2fmt - format as ASCII-art table.
+* tsv2html - format as HTML table.
+* others: tsv2yaml tsv2tex
 
-Here, the "tsv" file format is honest-to-goodness tab-separated values, usually with a header.  No quoting, escaping, or comments.  All rows should have the same number of fields.  Rows end with a unix \n newline.  Cell values cannot have tabs or newlines.
+By "tsv" we mean honest-to-goodness tab-separated values, often with a header.  No quoting, escaping, or comments.  All rows should have the same number of fields.  Rows end with a unix \n newline.  Cell values cannot have tabs or newlines.  (If you want those things in your data, make up your own convention (like backslash escaping) and have your application be aware of it.  Our philosophy is, a data processing utility should ignore that stuff in order to have safe and predictable behavior.)
 
 These conditions are all enforced in scripts that convert to tsv.  For programs that convert *out* of tsv, if these assumptions do not hold, the script's behavior is undefined.
 
-TSV is an easy format for other programs to handle: after removing the newline, split("\t") correctly parses a row.  
+TSV is an easy format for other programs to handle: after stripping the newline, split("\t") correctly parses a row.  
 
 Note that "tail +2" or "tail -n+2" strips out a tsv file's header.
 
@@ -102,11 +108,11 @@ Loading in R:
 Installation
 ------------
 
-Some of these scripts aren't very polished -- might need utf-8 fixes or something -- so you're best off just putting the entire directory on your PATH in case you need to hack up the scripts.
+It's probably useful to look at or tweak these scripts, so you're best off just putting the entire directory on your PATH.
 
 
-The philosophy of tsvutil
--------------------------
+The philosophy of tsvutils
+--------------------------
 
 Short version:
 

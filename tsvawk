@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 """
-Wrapper around tabawk, supplying column names as integers for their
-corresponding column numbers, so you can do things like
+Wrapper around tabawk, letting you use column names instead of positions.  It
+makes column names from the header into awk global variables that are integers
+for positions, so you can do things like
 
 tsvawk '{print $id,$name}'
+tsvawk '$count >= 5'
 
-Your awk script will *not* see the header line from the file.
+Your awk script will *not* see the header line from the file; this script absorbs it.
+
+The consequence is that the output doesn't get a header; you could always do
+echo c1 c2 | ssv2tsv  to get it yourself, perhaps.
 """
 
 import sys,os

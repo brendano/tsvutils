@@ -1,7 +1,15 @@
 #!/usr/bin/env python
-""" Space-separated fields => tab separated.  very tolerant of inconsistent
-numbers of spaces.  One use case: uniq -c | ssv2tsv  (though uniq2tsv better)
-space2tab a better name?  vaguely violates naming convention? """
+""" 
+Space-separated fields => tab separated.  very tolerant of inconsistent
+numbers of spaces.  Examples:
+
+uniq -c | ssv2tsv
+echo id name count | ssv2tsv
+
+This really should be called 'ssv2tab' or 'space2tab' to be more in-line with
+the naming conventions elsewhere, but I personally find those names harder to
+remember.
+"""
 import sys
 import tsvutil
 tsvutil.fix_stdio()
