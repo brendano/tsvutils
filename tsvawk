@@ -9,8 +9,7 @@ tsvawk '$count >= 5'
 
 Your awk script will *not* see the header line from the file; this script absorbs it.
 
-The consequence is that the output doesn't get a header; you could always do
-echo c1 c2 | ssv2tsv  to get it yourself, perhaps.
+  -r: repeat the header on output too.  (Only good for "print $0" sorts of scripts.)
 """
 
 import sys,os
@@ -25,6 +24,9 @@ flags = []
 for i,colname in enumerate(colnames):
   flags += ["-v", "%s=%s" % (colname, i+1)]
 
+if '-r' in sys.argv:
+  print header[:-1]
+  sys.argv.pop(sys.argv.index('-r'))
 #print flags
 args = ["tabawk"] + flags + sys.argv[1:]
 os.execvp( "tabawk", args )

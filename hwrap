@@ -12,7 +12,8 @@ cat file_with_header.tsv | hwrap grep bla
 cat file_with_header.tsv | hwrap bash -c "grep bla | head"
 """
 
-import sys,os
+import sys,os,subprocess
+
 if sys.stdin.isatty():
   print>>sys.stderr, __doc__.strip()
   sys.exit(1)
@@ -21,5 +22,4 @@ sys.stdout = open('/dev/stdout','w',buffering=0)
 header = sys.stdin.readline()
 print header[:-1]
 args = sys.argv[1:]
-os.execvp( args[0], args )
-#os.execvp("ls", ["--color","/"])
+subprocess.call(args, stdin=sys.stdin, stdout=sys.stdout)
