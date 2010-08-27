@@ -23,9 +23,9 @@ def safe_json_iter(raw_json_iter):
   for raw in raw_json_iter:
     try:
       json = simplejson.loads(raw)
+      yield json
     except Exception, e:
       print>>sys.stderr, type(e), e
-    yield json
 def take(n, iterable):
   "Return first n items of the iterable as a list"
   return list(itertools.islice(iterable, n))
@@ -46,14 +46,21 @@ def clean_cell(x):
   return BAD.sub(" ", unicode(x))
 
 def lookup(json, k):
-  # return json[k]
-  if '.' in k:
-    # jpath path
-    ks = k.split('.')
-    v = json
-    for k in ks: v = v.get(k,{})
-    return v or ""
-  return json.get(k,"")
+  # limited hacky subset of jpath
+  parts = k.split('.')
+  v = json
+  for part in parts: 
+    if part.endswith(']'):
+      m = re.search(r'^([^\]]+)\[([^\]])\]$', part)
+      if not m: raise Exception("wtf: %s" % repr(part))
+      k,ind = m.groups()
+      ind = eval(ind)
+      v = v[k]
+      v = v[ind]
+    else:
+      k = part
+      v = v.get(k,{})
+  return v or ""
 
 print "\t".join(keys)
 for json in json_iter:
