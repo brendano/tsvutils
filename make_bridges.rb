@@ -3,6 +3,8 @@
 sources = %w(csv eq json ssv uniq xlsx yaml)
 dests =   %w(csv fmt html my tex)
 
+system "mkdir -p bridges"
+
 bridges = []
 
 for s in sources
