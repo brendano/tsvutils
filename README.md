@@ -31,7 +31,7 @@ Convert out of tsv:
 
 By "tsv" we mean honest-to-goodness tab-separated values, often with a header.  No quoting, escaping, or comments.  All rows should have the same number of fields.  Rows end with a unix \n newline.  Cell values cannot have tabs or newlines.
 
-These conditions are all enforced in scripts that convert to tsv.  For programs that convert *out* of tsv, if these assumptions do not hold, the script's behavior is undefined.
+These conditions are all enforced in scripts that output tsv.  For programs that take tsv input, if these assumptions do not hold, the script's behavior is undefined.
 
 TSV is an easy format for other programs to handle:
 
@@ -47,7 +47,7 @@ Examples: pipelines
 The TSV format is intended to work with many other pipeline-friendly programs.  Examples include:
 
 * General
- - cat, head, tail, tail -n+X, cut, merge, diff, comm, sort, uniq, uniq -c, wc -l
+ * cat, head, tail, tail -n+X, cut, merge, diff, comm, sort, uniq, uniq -c, wc -l
 * Multipurpose
  - perl -pe, ruby -ne, awk, sed, tr
 * SQL to TSV
