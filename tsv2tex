@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Outputs to a basic TeX table format.
 
 puts "\\hline"
 for line in STDIN

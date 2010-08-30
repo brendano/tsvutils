@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+$doc = %{
+yaml2tsv
+
+Takes TSV-with-header and outputs as stream of YAML documents.
+This is a decent way to get key-value pretty printing;
+e.g. useful for if there are many columns.
+}
+
+require 'yaml'
+require 'pp'
+
+if STDIN.tty?
+  STDERR.puts $doc.strip
+  exit 1
+end
+
+columns = STDIN.readline.chomp.split("\t")
+STDIN.each do |line|
+  parts = line.chomp.split("\t")
+  h = {}
+  (0...parts.size).each{|i| h[columns[i]] = parts[i]}
+  puts h.to_yaml
+end

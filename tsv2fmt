@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Outputs in a ascii-art table, reminiscent of Postgres and MySQL command-lines.
+"""
 #from __future__ import print_function
 import sys
 from collections import defaultdict
@@ -30,7 +33,8 @@ widths = [max(width_hists[j].keys()) for j in range(J)]
 def print_row(row):
   global widths
   sys.stdout.write("| ")
-  sys.stdout.write(" | ".join([("%-"+str(widths[j])+"s") % row[j] for j in range(len(row))]))
+  if len(row) < J:  row += [""] * (J - len(row))
+  sys.stdout.write(" | ".join([("%-"+str(widths[j])+"s") % row[j] for j in range(J)]))
   print>>sys.stdout, " |"
 
 def print_sep():

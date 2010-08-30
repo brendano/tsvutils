@@ -1,3 +1,5 @@
 #!/bin/bash
-# kinda silly but sometimes useful
+# Converts out of the pipe-delimited (and whitespace-padded) format
+# from 'tsv2fmt'.
+# The existence of this script at all is kinda silly but sometimes useful.
 perl -pe 's/^\| *//g; s/ *\|$//;  s/ *\| */\t/g'

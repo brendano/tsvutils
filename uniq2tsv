@@ -1,2 +1,4 @@
 #!/bin/sh
+# USAGE:
+# ... | uniq -c | uniq2tsv
 perl -ne 'print "$1\t$2\n" if /^ *(\d+) (.*)/ or die "doesnt look like uniq -c format: $_"'
