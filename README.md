@@ -47,21 +47,21 @@ Examples: pipelines
 The TSV format is intended to work with many other pipeline-friendly programs.  Examples include:
 
 * General
- * cat, head, tail, tail -n+X, cut, merge, diff, comm, sort, uniq, uniq -c, wc -l
+    - cat, head, tail, tail -n+X, cut, merge, diff, comm, sort, uniq, uniq -c, wc -l
 * Multipurpose
- - perl -pe, ruby -ne, awk, sed, tr
+    - perl -pe, ruby -ne, awk, sed, tr
 * SQL to TSV
- - echo 'select a,b from bla' | mysql
- - echo a b | ssv2tsv; echo "select a,b from bla" | sqlite3 -separator $(echo -e '\t')
- - echo a b | ssv2tsv; echo "select a,b from bla" | psql -tqAF $(echo -e '\t')
+    - echo 'select a,b from bla' | mysql
+    - echo a b | ssv2tsv; echo "select a,b from bla" | sqlite3 -separator $(echo -e '\t')
+    - echo a b | ssv2tsv; echo "select a,b from bla" | psql -tqAF $(echo -e '\t')
 * GUI to TSV
- - Excel: copy-and-paste cells <-> text as tsv (though kills double quotes)
- - Web browsers: copy rendered HTML table -> text as tsv
+    - Excel: copy-and-paste cells <-> text as tsv (though kills double quotes)
+    - Web browsers: copy rendered HTML table -> text as tsv
 * Misc
- - [pv][] (Highly recommended!)
- - [shuffle][]
- - [md5sort][]
- - [setdiff][]
+    - [pv][] (Highly recommended!)
+    - [shuffle][]
+    - [md5sort][]
+    - [setdiff][]
 
 The tsvutils scripts' comments include further examples.
 
