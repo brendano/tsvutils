@@ -10,17 +10,6 @@ if ARGV.size==0 #and STDIN.tty?
 end
 
 awk_args = ARGV.clone
-
-ofs_cmd = 'OFS="\\t";'
-if awk_args[-1].nil? || awk_args[-1] =~ /^-/
-  # pass
-elsif awk_args[-1] =~ /BEGIN *\{/
-  awk_args[-1] = awk_args[-1].sub(/(BEGIN *\{)/, "\\1 #{ofs_cmd} ")
-else
-  awk_args[-1] = "BEGIN { #{ofs_cmd} }  #{awk_args[-1]}"
-end
-# p awk_args
-
-cmd = ["awk", "-F\t"] + awk_args
+cmd = ["awk", "-F\t", "-v", "OFS=\\t"] + awk_args
 exec *cmd
 
