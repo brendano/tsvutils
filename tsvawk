@@ -22,6 +22,8 @@ header = sys.stdin.readline()
 colnames = header[:-1].split("\t")
 flags = []
 for i,colname in enumerate(colnames):
+  colname = colname.strip()
+  if not colname: continue
   flags += ["-v", "%s=%s" % (colname, i+1)]
 
 if '-r' in sys.argv:
