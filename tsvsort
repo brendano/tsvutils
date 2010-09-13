@@ -1,0 +1,3 @@
+#!/bin/bash
+# Like tabsort, but preserve first row as header.
+exec hwrap tabsort "$@"
