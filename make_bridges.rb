@@ -1,7 +1,9 @@
 # go through tsv as universal intermediary
 
-sources = %w(csv eq json ssv uniq xlsx yaml)
-dests =   %w(csv fmt html my tex)
+sources = %w(csv eq json ssv uniq xlsx yaml fmt)
+dests =   %w(csv fmt html my tex ssv)
+
+opts_right = /.*2fmt/
 
 system "mkdir -p bridges"
 
@@ -14,10 +16,15 @@ for s in sources
     right = "tsv2#{d}"
     if File.exists?(left) && File.exists?(right)
       puts "making #{s}2#{d}"
+      if "#{s}2#{d}" =~ opts_right
+        right = %|#{right} "$@"|
+      else
+        left  = %|#{left} "$@"|
+      end
       open("bridges/#{s}2#{d}","w") do |f|
         f.puts %[
         #!/bin/sh
-        #{left} "$@" | #{right}
+        #{left} | #{right}
         ].gsub(/^ */,"").strip
       end
       bridges << "#{s}2#{d}"

@@ -1,12 +1,22 @@
 #!/usr/bin/env python
 """
-Outputs in a ascii-art table, reminiscent of Postgres and MySQL command-lines.
+Outputs an ascii-art table with aligned columns.
+Reminiscent of Postgres and MySQL commandlines.
 """
 #from __future__ import print_function
 import sys
 from collections import defaultdict
-import tsvutil
-tsvutil.fix_stdio()
+#import tsvutil
+#tsvutil.fix_stdio()
+
+OUTER_BORDERS = True
+INNER_BORDERS = True
+if '-o' in sys.argv:
+  OUTER_BORDERS = False
+if '-b' in sys.argv:
+  OUTER_BORDERS = False
+  INNER_BORDERS = False
+
 
 #width_hists = [defaultdict(lambda:0) for j in range(J)]
 width_hists = defaultdict(lambda: defaultdict(lambda:0))
@@ -14,16 +24,19 @@ width_hists = defaultdict(lambda: defaultdict(lambda:0))
 rows = []
 for line in sys.stdin:
   vals = line[:-1].split("\t")
+  vals = [v.strip() for v in vals]
 
   #for j in range(J):
   for j in xrange(len(vals)):
-    width_hists[j][len(vals[j])] += 1
+    val_len = len(vals[j].decode('utf-8','ignore'))
+    width_hists[j][val_len] += 1
   rows.append(vals)
+
+if not rows: sys.exit()
 
 J = max(width_hists.keys()) + 1
 assert range(J) == sorted(list(width_hists.keys()))
 
-if not rows: sys.exit()
 widths = [max(width_hists[j].keys()) for j in range(J)]
 
 # todo, if >5ish rows, drop high-width outliers  in a column when computing the
@@ -32,10 +45,12 @@ widths = [max(width_hists[j].keys()) for j in range(J)]
 
 def print_row(row):
   global widths
-  sys.stdout.write("| ")
+  if OUTER_BORDERS: sys.stdout.write("| ")
   if len(row) < J:  row += [""] * (J - len(row))
-  sys.stdout.write(" | ".join([("%-"+str(widths[j])+"s") % row[j] for j in range(J)]))
-  print>>sys.stdout, " |"
+  joiner = " | " if INNER_BORDERS else " "
+  sys.stdout.write(joiner.join([("%-"+str(widths[j])+"s") % row[j] for j in range(J)]))
+  if OUTER_BORDERS: sys.stdout.write(" |")
+  sys.stdout.write("\n")
 
 def print_sep():
   global widths
