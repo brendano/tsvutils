@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+
+"""
+gs2tsv SpreadSheetID  ...columns...
+
+Pull out columns from a Google Spreadsheet as TSV.
+You have to have column names in your spreadsheet.
+SpreadSheetID is big long key looking like:
+  0As_fJj-ffTmBdEp4T2FNNWxnZU53ZXVKR1dLSDc0N0E
+
+What's a secure way of storing your Google username/password?
+This script uses ROT-13 of the file ~/.google_pw ...
+"""
+
+# oh god i hate this api. so much b.s. just give me the damn data please
+# http://code.google.com/apis/spreadsheets/data/1.0/developers_guide_python.html#AuthClientLogin
+from __future__ import with_statement
+import xml.etree.ElementTree as ET     ## tree = ET.parse(open("bla.xml"))
+import sys,os
+import gdata.spreadsheet.service
+
+key = sys.argv[1]        # e.g. big long thing
+worksheet = 1
+
+column_names = sys.argv[2:]
+assert column_names, "need to specify columns to fetch"
+
+c=gdata.spreadsheet.service.SpreadsheetsService()
+c.email,c.password=os.popen("tr 'A-Za-z' 'N-ZA-Mn-za-m' < ~/.google_pw").read().split()
+c.ProgrammaticLogin()
+s=c.Get("http://spreadsheets.google.com/feeds/list/%s/%s/private/full" % (key,worksheet))
+string=s.ToString()
+# with open("bla.xml",'w') as f: f.write(string)
+xt=ET.fromstring(string)
+
+n=lambda e: "{http://schemas.google.com/spreadsheets/2006/extended}%s" % e
+column_data = [
+  [e.text or "" for e in xt.findall(".//" + n(column_name))]
+  for column_name in column_names
+]
+
+
+ncol = len(column_data)
+nrow = len(column_data[0])
+
+assert all(nrow == len(column) for column in column_data), "returned column data doesnt seem to be parallel. num rows by column: %s" % [len(c) for c in column_data]
+
+warning_count=0
+warning_max = 20
+def warning(s):
+  global warning_count
+  warning_count += 1
+  if warning_count > warning_max: return
+  print>>sys.stderr, "WARNING: %s" % s
+
+def cell_text_clean(text):
+  s = text
+  if isinstance(s,str):
+    s = unicode(s, 'utf8', 'replace')
+  #print repr(text)
+  #s = unicode(text,'utf8','replace')
+  #s = unicode(text,'utf8')
+  if "\t" in s: warning("Clobbering embedded tab")
+  if "\n" in s: warning("Clobbering embedded newline")
+  if "\r" in s: warning("Clobbering embedded carriage return")
+  s = s.replace("\t"," ").replace("\n"," ").replace("\r"," ")
+  return s
+
+
+sys.stdout.write("\t".join(column_names) + "\n")
+for i in range(nrow):
+  sys.stdout.write( "\t".join(cell_text_clean(column_data[j][i]) for j in range(ncol)) )
+  sys.stdout.write("\n")
+
+
+if warning_count > warning_max:
+  print>>sys.stderr, "%d total warnings, %d hidden" % (warning_count, warning_count-warning_max)
