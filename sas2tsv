@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+# This was written to deal with sf1geo.sas in http://www.census.gov/support/2000/SF1/SF1SAS.zip
+# It describes a fixed-width format file.
+# This is probably really limited for the format.
+"""
+USAGE
+sas2tsv [option]  schema.sas  data.dat [field1 field2...]
+
+-d  output just the schema as JSON.
+-h  output just the header as TSV.
+
+Otherwise, convert input data to TSV, outputting specified fields.
+If no fields specified, do all of them.
+"""
+
+import sys,os,re
+import tsvutil;tsvutil.fix_stdio()
+
+def parse_sas_schema(sas_schema):
+  input_block = re.search('\s* INPUT \s+ ( [^;]* );'.replace(' ',''), sas_schema, re.M).group(1)
+  inputs = input_block.strip().split('\n')
+  inputs = [L.strip() for L in inputs if L.strip()]
+
+  field_info = {}
+  all_fields = []
+  for input in inputs:
+    if '$' in input:
+      field,char_range = input.split('$')
+    else:
+      field = input
+    field = field.strip()
+    all_fields.append(field)
+    field_info[field] = {}
+
+    char_range = char_range.strip()
+    if char_range:
+      start,end = char_range.strip().split('-')
+      start,end = int(start), int(end)
+      field_info[field]['range'] = (start-1, end)
+
+  label_block = re.search(r'^\s* LABEL \s+ ( [^;]* );'.replace(' ',''), sas_schema, re.M).group(1)
+  labels = label_block.strip().split('\n')
+  labels = [L.strip() for L in labels if L.strip()]
+  for label_line in labels:
+    field,label = re.search(r'([^=]+)=(.*)',label_line).groups()
+    label = label.strip()
+    field_info[field]['label'] = label
+
+  return all_fields, field_info
+
+
+dump_schema = '-d' in sys.argv
+if dump_schema:
+  sys.argv.pop(sys.argv.index('-d'))
+just_header = '-h' in sys.argv
+if just_header:
+  sys.argv.pop(sys.argv.index('-h'))
+sas_schema = sys.argv[1]
+sas_schema = open(sas_schema).read()
+sas_schema = re.sub('/\* .*? \*/'.replace(' ',''), '', sas_schema)
+all_fields, field_info = parse_sas_schema(sas_schema)
+
+if dump_schema:
+  import json
+  print json.dumps({'all_fields':all_fields, 'field_info':field_info}, sort_keys=True, indent=4)
+  sys.exit(0)
+if just_header:
+  print '\t'.join(all_fields)
+  sys.exit(0)
+
+data = sys.stdin if sys.argv[2]=='-' else open(sys.argv[2])
+keys = sys.argv[3:] or all_fields
+
+key_ranges = [field_info[k]['range'] for k in keys]
+print '\t'.join(keys)
+for line in data:
+  values = [line[s:e] for s,e in key_ranges]
+  print '\t'.join(values)
+
