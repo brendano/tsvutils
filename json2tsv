@@ -5,7 +5,7 @@ you specify into columns.
 
 If you don't specify any keys, it tries to figure out the set of all keys.
 """
-for m in ['json','simplejson','yajl']:
+for m in ['yajl','simplejson','json']:
   try:
     exec "import %s as simplejson" % m
     break
