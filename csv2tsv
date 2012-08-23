@@ -9,8 +9,6 @@ Output is honest-to-goodness tsv: no quoting or any \n\r\t.
 import csv, sys
 
 from tsvutil import cell_text_clean, warning, UnicodeReader
-import tsvutil
-tsvutil.fix_stdio()
 
 def clean_row(row):
   return [cell_text_clean(x) for x in row]
@@ -34,14 +32,14 @@ else:
   sys.exit(1)
 
 header = reader.next()
-print "\t".join(clean_row(header))
+print "\t".join(clean_row(header)).encode('utf8')
 #print(*clean_row(header), sep="\t")
 
 for row in reader:
   if len(row) < len(header):
     # warning("Row with %d values is too short; padding with %d blanks" % (len(row),len(header)-len(row)))
     row += [''] * (len(header) - len(row))
-  print "\t".join(clean_row(row))
+  print "\t".join(clean_row(row)).encode('utf8')
   #print(*clean_row(row), sep="\t")
 
 
