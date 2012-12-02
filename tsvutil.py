@@ -12,27 +12,21 @@ def warning(s):
 
 def cell_text_clean(text):
   s = text
-  if isinstance(s,str):
+  # um i can't remember what subclasses which
+  if isinstance(s,str) and not isinstance(s,unicode):
     s = unicode(s, 'utf8', 'replace')
-  #print repr(text)
-  #s = unicode(text,'utf8','replace')
-  #s = unicode(text,'utf8')
   if "\t" in s: warning("Clobbering embedded tab")
   if "\n" in s: warning("Clobbering embedded newline")
   if "\r" in s: warning("Clobbering embedded carriage return")
   s = s.replace("\t"," ").replace("\n"," ").replace("\r"," ")
+  s = s.encode('utf-8')
   return s
 
 def fix_stdio():
-  # ideally, would be nice to make python shut up and pretend encodings dont exist, like ruby
-  # by default coerces to ascii -- very bad
-  # solution seems to be to coerce to utf8 -- but not necessarily ideal either
-  # these /dev thingies aren't good to use on all platforms, have seen problems on linux
-  sys.stdout = codecs.open('/dev/stdout','w',encoding='utf8',buffering=0)
   sys.stdout = IOWrapper(sys.stdout)
-  sys.stdin = codecs.open('/dev/stdin','U',encoding='utf8',buffering=0)
 
 class IOWrapper:
+  # I like to press Ctrl-C; why is Python yelling at me?
   def __init__(self, fp):
     self.fp = fp
   def write(self,*a,**k):

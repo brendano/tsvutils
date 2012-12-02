@@ -39,17 +39,26 @@ if not keys:
   keys = list(keys); keys.sort()
   json_iter = itertools.chain(top, json_iter)
 
-BAD = re.compile("[\r\n\t]")
+BAD_WS = re.compile(r"[\r\n\t]")
 
 def clean_cell(x):
   if x is None: return ""
-  return BAD.sub(" ", unicode(x))
+  if isinstance(x, unicode):
+    return BAD_WS.sub(" ", x.encode('utf-8'))
+  if isinstance(x, str):
+    return BAD_WS.sub(" ", x)
+  return x
+
+def stringify(x):
+  if isinstance(x, str) and not isinstance(x, unicode): return x
+  if isinstance(x, unicode): return x.encode('utf-8')
+  return str(x)
 
 def lookup(json, k):
   # limited hacky subset of jpath
   parts = k.split('.')
   v = json
-  for part in parts: 
+  for i,part in enumerate(parts):
     if part.endswith(']'):
       m = re.search(r'^([^\]]+)\[([^\]])\]$', part)
       if not m: raise Exception("wtf: %s" % repr(part))
@@ -59,12 +68,12 @@ def lookup(json, k):
       v = v[ind]
     else:
       k = part
-      v = v.get(k,{})
-  return v or ""
+      v = v.get(k, '' if i==len(parts)-1 else {})
+  return v
 
-print "\t".join(keys)
+print "\t".join([k.encode('utf-8') for k in keys])
 for json in json_iter:
-  print "\t".join([clean_cell(lookup(json,k)) for k in keys])
+  print "\t".join([stringify(clean_cell(lookup(json,k))) for k in keys])
   #print "\t".join([clean_cell(json[k]) for k in keys])
   #print(*[clean_cell(json[k]) for k in keys], sep="\t")
 

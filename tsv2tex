@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 # Outputs to a basic TeX table format.
 
-puts "\\hline"
+# puts "\\hline"
 for line in STDIN
   puts line.chomp.gsub("_","\\_").gsub("\t"," & ") + " \\\\"
 end
-puts "\\hline"
+# puts "\\hline"

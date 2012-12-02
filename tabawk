@@ -10,6 +10,7 @@ if ARGV.size==0 #and STDIN.tty?
 end
 
 awk_args = ARGV.clone
-cmd = ["awk", "-F\t", "-v", "OFS=\\t"] + awk_args
+awk_cmd = ENV["AWK"] || "awk"
+cmd = [awk_cmd, "-F\t", "-v", "OFS=\\t"] + awk_args
 exec *cmd
 
