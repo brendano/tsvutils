@@ -2,10 +2,46 @@
 """make an html table useful for ad-hoc reporting, e.g. in a wiki or webpage"""
 
 import sys
+
+header = """
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <link rel="stylesheet" href="http://brenocon.com/js/tablesorter/2.7.2/css/mytheme.css" >
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script> 
+    <script type="text/javascript" src="http://brenocon.com/js/tablesorter/2.7.2/js/jquery.tablesorter.min.js"></script> 
+    <script>
+    $(document).ready(function() 
+        { 
+            $("table").tablesorter();
+        } 
+    ); 
+    </script>
+"""
+
+def print_rows():
+  for line in sys.stdin:
+    parts = line[:-1].split("\t")
+    sys.stdout.write("<tr>")
+    for part in parts: sys.stdout.write("<td>%s" % part)
+    print
+
+
+sortable = '-s' in sys.argv
+
+if sortable:
+  print header
+
 print "<table cellpadding=3 border=1 cellspacing=0 width='100%'>"
-for line in sys.stdin:
+if sortable:
+  print "<thead>"
+  line = sys.stdin.readline()
   parts = line[:-1].split("\t")
   sys.stdout.write("<tr>")
-  for part in parts: sys.stdout.write("<td>%s" % part)
-  print
+  for part in parts: sys.stdout.write("<th>%s" % part)
+  print "</thead>"
+  print "<tbody>"
+
+print_rows()
+
+if sortable: print "</tbody>"
+
 print "</table>"
