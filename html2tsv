@@ -1,0 +1,2 @@
+#!/bin/bash
+grep -v '^<table>' | perl -pe 's|^\<tr\>||; s|^\<td\>||; s|\<td\>|\t|g'
