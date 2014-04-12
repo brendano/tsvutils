@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+# adapted from http://stackoverflow.com/questions/9884353/xls-to-csv-convertor
+import xlrd
+# import csv
+import sys
+
+warning_count=0
+warning_max = 20
+def warning(s):
+  global warning_count
+  warning_count += 1
+  if warning_count > warning_max: return
+  print>>sys.stderr, "WARNING: %s" % s
+
+def cell_text_clean(text):
+  s = text
+  if "\t" in s: warning("Clobbering embedded tab")
+  if "\n" in s: warning("Clobbering embedded newline")
+  if "\r" in s: warning("Clobbering embedded carriage return")
+  s = s.replace("\t"," ").replace("\n"," ").replace("\r"," ")
+  return s
+
+def tsv_from_excel(excel_file, sheetnum):
+    workbook = xlrd.open_workbook(excel_file)
+    all_worksheets = workbook.sheet_names()
+    worksheet_name = all_worksheets[ sheetnum-1 ]
+    worksheet = workbook.sheet_by_name(worksheet_name)
+    # wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
+
+    for rownum in xrange(worksheet.nrows):
+        row = [unicode(entry).encode("utf-8") for entry in worksheet.row_values(rownum)]
+        row = [cell_text_clean(x) for x in row]
+        print '\t'.join(row)
+
+def usage():
+    print>>sys.stderr, """
+USAGE:
+xls2tsv filename.xls [sheetnum]
+sheetnum >= 1, defaults to 1
+""".strip()
+    sys.exit(1)
+
+def main(args):
+    if len(args)<2: usage()
+    if len(args)>4: usage()
+    excel_file = args[1]
+    sheet_num = int(args[2]) if len(args)>=2 else 1
+    if sheet_num < 1:
+        assert False, "need sheet number to be >= 1"
+    tsv_from_excel(excel_file, sheet_num)
+
+if __name__ == "__main__":
+    main(sys.argv)
+
