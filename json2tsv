@@ -3,64 +3,38 @@
 Convert a stream of JSON objects to TSV, extracting the keys 
 you specify into columns.
 
-Prints a line for the column names, then the data values.
-
 If you don't specify any keys, it tries to figure out the set of all keys.
 """
-import sys,re,itertools
-import json
+
+import json as jsonmod
 try:
-    import ujson as json
+    exec "import ujson as jsonmod"
 except ImportError:
     pass
 
-warning_count = 0
-warning_max = 20
-def warning(s):
-  global warning_count
-  warning_count += 1
-  if warning_count == warning_max + 1:
-      print>>sys.stderr, "WARNING: Supressing further warnings."
-      return
-  if warning_count > warning_max: return
-  print>>sys.stderr, "WARNING: %s" % s
+import sys,re,itertools
+import tsvutil
 
-def stringify(s, encoding='utf8', *args):
-  if isinstance(s,str): return s
-  if isinstance(s,unicode): return s.encode(encoding, *args)
-  return str(s)
-
-def cell_text_clean(obj):
-  s = stringify(obj, 'utf8', 'replace')
-  if "\t" in s: warning("Clobbering embedded tab")
-  if "\n" in s: warning("Clobbering embedded newline")
-  if "\r" in s: warning("Clobbering embedded carriage return")
-  s = s.replace("\t"," ").replace("\n"," ").replace("\r"," ")
-  return s
-
-def take(n, iterable):
-  "Return first n items of the iterable as a list"
-  return list(itertools.islice(iterable, n))
-
-from collections import defaultdict
-
-def modes(values):
-    count = defaultdict(int)
-    for v in values:
-        count[v] +=1
-    best = max(count.values())
-    return [k for k,v in count.items() if v == best]
-
-def mode(values):
-    return modes(values)[0]
+#all_json = jsonmod.load(sys.stdin)
+#assert isinstance(all_json, list) and len(all_json)>0
+#item1 = json[0]
+#keys = items1.keys()
+#keys.sort()
+#json_iter = all_json
 
 def safe_json_iter(raw_json_iter):
   for raw in raw_json_iter:
     try:
-      data = json.loads(raw)
+      data = jsonmod.loads(raw)
       yield data
-    except Exception:
-        warning("Failed to parse JSON")
+    except Exception, e:
+      pass
+      # print>>sys.stderr, type(e), e
+      # print>>sys.stderr, repr(raw)
+
+def take(n, iterable):
+  "Return first n items of the iterable as a list"
+  return list(itertools.islice(iterable, n))
 
 def order_keys(keys, item_sample):
   # Some heuristics that may or may not help
@@ -77,7 +51,8 @@ def order_keys(keys, item_sample):
       if isinstance(value, unicode):
         lengths[key].append(len(value))
   lengths = dict((k, 0 if not L else median(L)) for (k,L) in lengths.items())
-  types = dict((k,mode(L)) for k,L in types.items())
+  # types = dict((k,tsvutil.mode(L)) for k,L in types.items())
+  types = dict((k,L[0]) for k,L in types.items())
   prios = [
     lambda k: k=='id',
     lambda k: k.endswith('_id'),
@@ -88,10 +63,40 @@ def order_keys(keys, item_sample):
     return (prio, lengths.get(key,0))
   return sorted(keys, key=score)
 
-def lookup(d, k):
+args = sys.argv[1:]
+PRINT_HEADER = False
+if '-c' in args:
+    PRINT_HEADER = True
+    args.pop(args.index('-c'))
+
+json_iter = safe_json_iter(sys.stdin)
+keys = args
+if not keys:
+  top = take(1000, json_iter)
+  keys = set()
+  for item in top:  keys |= set(item.keys())
+  keys = order_keys(keys, top)
+  json_iter = itertools.chain(top, json_iter)
+
+BAD_WS = re.compile(r"[\r\n\t]")
+
+def clean_cell(x):
+  if x is None: return ""
+  if isinstance(x, unicode):
+    return BAD_WS.sub(" ", x.encode('utf-8'))
+  if isinstance(x, str):
+    return BAD_WS.sub(" ", x)
+  return x
+
+def stringify(x):
+  if isinstance(x, str) and not isinstance(x, unicode): return x
+  if isinstance(x, unicode): return x.encode('utf-8')
+  return str(x)
+
+def lookup(json, k):
   # limited hacky subset of jpath
   parts = k.split('.')
-  v = d
+  v = json
   for i,part in enumerate(parts):
     if part.endswith(']'):
       m = re.search(r'^([^\]]+)\[([^\]])\]$', part)
@@ -105,27 +110,10 @@ def lookup(d, k):
       v = v.get(k, '' if i==len(parts)-1 else {})
   return v
 
-def test_stuff():
-  import os
-  def run(cmd):
-    print "===",cmd
-    os.system(cmd)
-  run("./json2tsv < json2tsv_testdata/30lines_bad_json.txt")
-  run("./json2tsv < json2tsv_testdata/30lines_bad_ws.txt")
+if PRINT_HEADER:
+    print "\t".join([k.encode('utf-8') for k in keys])
+for json in json_iter:
+  print "\t".join([stringify(clean_cell(lookup(json,k))) for k in keys])
+  #print "\t".join([clean_cell(json[k]) for k in keys])
+  #print(*[clean_cell(json[k]) for k in keys], sep="\t")
 
-if __name__=='__main__':
-  json_iter = safe_json_iter(sys.stdin)
-  keys = sys.argv[1:]
-  if not keys:
-    top = take(1000, json_iter)
-    keys = set()
-    for item in top:  keys |= set(item.keys())
-    keys = order_keys(keys, top)
-    json_iter = itertools.chain(top, json_iter)
-
-  print "\t".join([k.encode('utf-8') for k in keys])
-  for d in json_iter:
-    strlist = [cell_text_clean(lookup(d,k)) for k in keys]
-    print "\t".join(strlist)
-
-# vim:sts=2:sw=2
