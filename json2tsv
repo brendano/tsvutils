@@ -5,19 +5,17 @@ you specify into columns.
 
 If you don't specify any keys, it tries to figure out the set of all keys.
 """
-for m in ['yajl','simplejson','json']:
-  try:
-    exec "import %s as simplejson" % m
-    break
-  except ImportError:
+
+import json as jsonmod
+try:
+    exec "import ujson as jsonmod"
+except ImportError:
     pass
-else:
-  raise Exception("Didn't find a JSON library")
 
 import sys,re,itertools
 import tsvutil
 
-#all_json = simplejson.load(sys.stdin)
+#all_json = jsonmod.load(sys.stdin)
 #assert isinstance(all_json, list) and len(all_json)>0
 #item1 = json[0]
 #keys = items1.keys()
@@ -27,11 +25,12 @@ import tsvutil
 def safe_json_iter(raw_json_iter):
   for raw in raw_json_iter:
     try:
-      data = simplejson.loads(raw)
+      data = jsonmod.loads(raw)
       yield data
     except Exception, e:
-      print>>sys.stderr, type(e), e
-      print>>sys.stderr, repr(raw)
+      pass
+      # print>>sys.stderr, type(e), e
+      # print>>sys.stderr, repr(raw)
 
 def take(n, iterable):
   "Return first n items of the iterable as a list"
@@ -52,7 +51,8 @@ def order_keys(keys, item_sample):
       if isinstance(value, unicode):
         lengths[key].append(len(value))
   lengths = dict((k, 0 if not L else median(L)) for (k,L) in lengths.items())
-  types = dict((k,tsvutil.mode(L)) for k,L in types.items())
+  # types = dict((k,tsvutil.mode(L)) for k,L in types.items())
+  types = dict((k,L[0]) for k,L in types.items())
   prios = [
     lambda k: k=='id',
     lambda k: k.endswith('_id'),
@@ -63,8 +63,14 @@ def order_keys(keys, item_sample):
     return (prio, lengths.get(key,0))
   return sorted(keys, key=score)
 
+args = sys.argv[1:]
+PRINT_HEADER = False
+if '-c' in args:
+    PRINT_HEADER = True
+    args.pop(args.index('-c'))
+
 json_iter = safe_json_iter(sys.stdin)
-keys = sys.argv[1:]
+keys = args
 if not keys:
   top = take(1000, json_iter)
   keys = set()
@@ -104,7 +110,8 @@ def lookup(json, k):
       v = v.get(k, '' if i==len(parts)-1 else {})
   return v
 
-print "\t".join([k.encode('utf-8') for k in keys])
+if PRINT_HEADER:
+    print "\t".join([k.encode('utf-8') for k in keys])
 for json in json_iter:
   print "\t".join([stringify(clean_cell(lookup(json,k))) for k in keys])
   #print "\t".join([clean_cell(json[k]) for k in keys])
