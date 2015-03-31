@@ -15,5 +15,6 @@ awk_args = sys.argv[1:]
 awk_cmd = (os.environ.get("AWK") or "awk").strip()
 cmd = [awk_cmd, "-F\t", "-v", r"OFS=\t"] + awk_args
 # print>>sys.stderr, cmd
-return subprocess.call(cmd)
+ret = subprocess.call(cmd)
+sys.exit(ret)
 
