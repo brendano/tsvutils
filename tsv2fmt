@@ -28,7 +28,7 @@ for line in sys.stdin:
 
   #for j in range(J):
   for j in xrange(len(vals)):
-    val_len = len(vals[j].decode('utf-8','ignore'))
+    val_len = len(vals[j].decode('utf-8','replace'))
     width_hists[j][val_len] += 1
   rows.append(vals)
 
