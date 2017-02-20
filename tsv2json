@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+"""
+Convert TSV (with header) into a stream of newline-delimited JSON objects.
+
+EXAMPLE: pretty print
+cat events.2015.20170206133646.tab | tsv2json | jq .
+"""
+
+import sys
+import json as jsonmod
+try:
+    exec "import ujson as jsonmod"
+except ImportError:
+    pass
+
+warning_count = 0
+warning_max = 20
+def warning(s):
+  global warning_count
+  warning_count += 1
+  if warning_count > warning_max: return
+  print>>sys.stderr, "WARNING: %s" % s
+
+headerline = sys.stdin.readline()
+colnames = headerline.rstrip("\n").split("\t")
+
+for line_num,line in enumerate(sys.stdin):
+    parts = line.rstrip("\n").split("\t")
+    if len(parts) != len(colnames):
+        warning("Mismatched %d columns in line %d, but %s in header" % (len(parts), line_num+2, len(colnames)))
+        n = min(len(parts),len(colnames))
+        dct = dict(zip(colnames[:n], parts[:n]))
+    else:
+        dct = dict(zip(colnames,parts))
+    print jsonmod.dumps(dct)
+
