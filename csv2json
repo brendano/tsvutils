@@ -1,0 +1,33 @@
+#!/usr/bin/env python
+r""" 
+Input is Excel-style CSV.  Either stdin or filename.
+  (We can handle Mac Excel's \r-delimited csv)
+Output is JSON records, one per line.
+"""
+
+#from __future__ import print_function
+import csv, sys, json
+
+args = sys.argv[:]
+args.pop(0)
+if len(args)==1:
+  reader = csv.DictReader(open(args[0],'U'))
+  #reader = csv.reader(codecs.open(args[0],'U','utf-8'))
+elif len(args) > 1:
+  raise Exception("No support for multiple files yet")
+  # could try to enforce conformity, or meld them together, etc.
+elif not sys.stdin.isatty():
+  reader = csv.DictReader(sys.stdin)
+else:
+  print(__doc__.strip())
+  sys.exit(1)
+
+def decode(string):
+    assert isinstance(string, str) and not isinstance(string, unicode)
+    return string.decode("utf8", "replace")
+
+for record in reader:
+    # Tricky. Want unicode objects.
+    record = {decode(k):decode(v) for k,v in record.items()}
+    # print record
+    print json.dumps(record)
