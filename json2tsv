@@ -92,22 +92,19 @@ def stringify(x):
   if isinstance(x, unicode): return x.encode('utf-8')
   return str(x)
 
-def lookup(json, k):
-  # limited hacky subset of jpath
-  parts = k.split('.')
-  v = json
-  for i,part in enumerate(parts):
-    if part.endswith(']'):
-      m = re.search(r'^([^\]]+)\[([^\]])\]$', part)
-      if not m: raise Exception("wtf: %s" % repr(part))
-      k,ind = m.groups()
-      ind = eval(ind)
-      v = v[k]
-      v = v[ind]
-    else:
-      k = part
-      v = v.get(k, '' if i==len(parts)-1 else {})
-  return v
+def lookup(myjson, k):
+  # return myjson[k]
+  if '.' in k:
+    # jpath path
+    ks = k.split('.')
+    v = myjson
+    for k in ks: 
+        if v is None:
+            pass
+        else:
+            v = v.get(k,{})
+    return v or ""
+  return myjson.get(k,"")
 
 if PRINT_HEADER:
     print "\t".join([k.encode('utf-8') for k in keys])
