@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 """ 
 Space-separated fields => tab separated.  very tolerant of inconsistent
 numbers of spaces.  Examples:

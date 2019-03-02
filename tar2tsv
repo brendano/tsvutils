@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 r"""
 Output one-file-per-line from a tar file, in the format
 

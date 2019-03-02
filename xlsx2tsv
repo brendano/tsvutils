@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 """
 xlsx2tsv  filename.xlsx  [sheet number or name]
 
@@ -90,7 +90,7 @@ def cell2text(cell):
     si = ss_list[idx]
     t_elt = si.find(n("t"))
     if t_elt is not None:
-      return t_elt.text
+      return t_elt.text or ""
     t_elts = si.findall(n("r") + "/" + n("t"))
     if t_elts:
       text = "".join( (t.text) for t in t_elts )
