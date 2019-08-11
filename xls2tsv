@@ -44,7 +44,7 @@ def main(args):
     if len(args)<2: usage()
     if len(args)>4: usage()
     excel_file = args[1]
-    sheet_num = int(args[2]) if len(args)>=2 else 1
+    sheet_num = int(args[2]) if len(args)>2 else 1
     if sheet_num < 1:
         assert False, "need sheet number to be >= 1"
     tsv_from_excel(excel_file, sheet_num)
