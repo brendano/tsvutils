@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 """
 Convert TSV (with header) into a stream of newline-delimited JSON objects.
 

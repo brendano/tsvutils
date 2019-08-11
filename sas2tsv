@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 # This was written to deal with sf1geo.sas in http://www.census.gov/support/2000/SF1/SF1SAS.zip
 # It describes a fixed-width format file.
 # This is probably really limited for the format.
